@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "library(dplyr)\nlibrary(tidyr)\n\n#read in data\ndfStore <- read.csv(file='data/stores.csv')\ndfTrain <- read.csv(file='data/train.csv')\ndfTest <- read.csv(file='data/test.csv')\ndfFeatures <- read.csv(file='data/features.csv')\nsubmission = read.csv(file='data/sampleSubmission.csv',header=TRUE,as.is=TRUE)\n\n# Merge Type and Size\ndfTrainTmp <- merge(x=dfTrain, y=dfStore, all.x=TRUE)\ndfTestTmp <- merge(x=dfTest, y=dfStore, all.x=TRUE)\n\n# Merge all the features\ntrain <- merge(x=dfTrainTmp, y=dfFeatures, all.x=TRUE)\ntest <- merge(x=dfTestTmp, y=dfFeatures, all.x=TRUE)\n",
+    "created" : 1468412134305.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "155154350",
+    "id" : "3C398277",
+    "lastKnownWriteTime" : 1468412147,
+    "last_content_update" : 1468412147615,
+    "path" : "~/GitHub/Kaggle_Walmart/data_prep.R",
+    "project_path" : "data_prep.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
