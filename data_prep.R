@@ -33,7 +33,7 @@ dfTest$Day_Index <- sapply(dfTest$Date, function(d)which(d==all_dates))
 
 
 #### Split Date into Year/Month/Day
-## train
+# train
 d <- strsplit(dfTrain$Date, '-')
 d <- as.numeric(unlist(d))
 d <- matrix(d, dim(dfTrain)[1], 3, byrow=T)
