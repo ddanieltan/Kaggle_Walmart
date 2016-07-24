@@ -1,5 +1,6 @@
 library(dplyr)
 library(tidyr)
+library(reshape)
 
 #read in data
 dfStore <- read.csv(file='data/stores.csv')
@@ -24,16 +25,15 @@ dfFeatures$Date <- as.character(dfFeatures$Date)
 #### Compute the number of days back to baseline date
 baseline_date <- as.Date('2010-02-05')
 dfTrain$Days <- as.numeric(as.Date(dfTrain$Date) - baseline_date)
-dfTest$Days <- as.numeric(as.Date(dfTest$Date) - baseline_date)
+dfTest$Days <- as.numeric(as.Daplote(dfTest$Date) - baseline_date)
 
 #### Compute the corresponding day index for plotting figure
 all_dates <- sort(unique(dfFeatures$Date))
 dfTrain$Day_Index <- sapply(dfTrain$Date, function(d)which(d==all_dates))
 dfTest$Day_Index <- sapply(dfTest$Date, function(d)which(d==all_dates))
 
-
 #### Split Date into Year/Month/Day
-# train
+## train
 d <- strsplit(dfTrain$Date, '-')
 d <- as.numeric(unlist(d))
 d <- matrix(d, dim(dfTrain)[1], 3, byrow=T)
