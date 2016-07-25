@@ -18,26 +18,42 @@ test <- merge(x=dfTestTmp, y=dfFeatures, all.x=TRUE)
 train$Date <- as.Date(train$Date)
 test$Date <- as.Date(test$Date)
 
-#df2010 <- train[train$Date <= "2011-01-01",]
-#dfstore1 <- train[train$Store == 1,]
-#s1d1 <- train %>%
-#  filter(train$Store==1,train$Dept==1)
+#Create a subset of just Weekly Sales over 52 weeks for each store-dept pair
+s1d1 <- train %>%
+  filter(Store == 1, Dept == 1) %>%
+  select(5) #Weekly_Sales
 
-png(filename = 'visualizations/test.png')
-plot(s1d1$Weekly_Sales~s1d1$Date,type="l")
-dev.off()
+#Creating a ts object for each store-dept pair
+s1d1.ts <- ts(s1d1,frequency=52)
+
+#plotting time-series graph
+plot.ts(s1d1.ts,
+        main="Title",
+        xlab="Time",
+        ylab="Weekly Sales")
 
 #There are a total of 45 unique store numbers from 1 to 45.
 #There are a total of 81 unique dept numbers from 1 to 99.
 #Creating a df of unique store and dept pairs.
 unique_pairs <- unique(train[,c("Store","Dept")])
 
+for (i in unique_pairs){
+  temp.df <- train %>%
+    filter(Store==unique_pairs$Store, Dept==unique_pairs$Dept) %>%
+    select(5) #Weekly_sales
+  name_of_file <- paste("visualizations/store",unique_pairs$Store,"_dept",unique_pairs$Dept,".png",sep="")
+  temp.ts <- ts(temp.df,frequency=52)
+  png(filename=name_of_file)
+  plot.ts(temp.ts)
+  dev.off()
+}
+
 #Creating visualizations of the weekly sales for each store-dept pair
 for (i in unique_pairs){
   temp_store <- unique_pairs[i,]$Store
   temp_dept <- unique_pairs[i,]$Dept
   #new_df <- filter(train,train$Store==temp_store,train$Dept==temp_dept)
-  new_df <- train %>% filter(train$Store==temp_store, train$Dept==temp_dept)
+  new_df <- subset(train,Store==temp_store,Dept==temp_dept)
   name_of_file <- paste("visualizations/store",temp_store,"_dept",temp_dept,".png",sep="")
   png(filename=name_of_file)
   plot(new_df$Weekly_Sales~new_df$Date,type="l",
@@ -60,3 +76,13 @@ for (i in 1:45){
     dev.off()
   }
 }
+
+###For reference
+#df2010 <- train[train$Date <= "2011-01-01",]
+#dfstore1 <- train[train$Store == 1,]
+#s1d1 <- train %>%
+#  filter(train$Store==1,train$Dept==1)
+#png(filename = 'visualizations/test.png')
+#plot(s1d1$Weekly_Sales~s1d1$Date,type="l")
+#dev.off()
+
