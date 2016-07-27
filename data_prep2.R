@@ -35,7 +35,7 @@ for (i in 1:nrow(unique_pairs)){
   dev.off()
 }
 
-#Create a subset of just Weekly Sales over 52 weeks for each store-dept pair
+#Create a subset of just Weekly Sales for each store-dept pair
 s1d1 <- train %>%
   filter(Store == 1, Dept == 1) %>%
   select(5) #Weekly_Sales
