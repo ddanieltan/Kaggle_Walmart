@@ -15,7 +15,14 @@ adf.test(s1d1.ts,alternative = "stationary")
 #So large p-values are indicative of non-stationarity, and small p-values suggest stationarity. 
 #Using the usual 5% threshold, differencing is required if the p-value is greater than 0.05.
 
-
+####Holt Winters
+s1d1.fit <- ets(s1d1.ts) #frequency too high, suggested using stlf
+s1d1.fit <- auto.arima(s1d1.ts)
+s1d1.fit <- forecast(s1d1.ts)
+s1d1.test <- train %>%
+  filter(Store == 1, Dept == 1) %>%
+  select(5)
+accuracy(s1d1.fit,s1d1.test)
 
 ##Exponential Smoothing using state space approach
 ets.f <- dlply(dfTrain, "id", function(x) stlf(ts(x[,2],frequency=52),method="ets",h=39)$mean)
