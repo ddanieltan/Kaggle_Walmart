@@ -34,3 +34,13 @@ arima.f <- dlply(train, "id", function(x) stlf(ts(x[,2],frequency=52),method="ar
 
 ##Naive Method - whatever I did last year same week is what I'm going to do ##same week this year
 naive.f <- dlply(train, "id", function(x) stlf(ts(x[,2],frequency=52),method="naive",h=39)$mean) 
+
+###Time Series Clustering using Dynamic Time Warp
+library(dtwclust)
+
+#Random sampling of 60 time series
+n <- 10
+s <- sample(1:100, n)
+idx <- c(s, 100+s, 200+s, 300+s, 400+s, 500+s)
+sample_unique_pairs <- unique_pairs[idx,]
+#i need to figure out if I want to loop through train and creat 3331 time series objects
