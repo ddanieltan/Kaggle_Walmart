@@ -43,19 +43,4 @@ s1d1 <- train %>%
 #Creating a ts object for each store-dept pair
 s1d1.ts <- ts(s1d1,frequency=52)
 
-#plotting time-series graph
-plot.ts(s1d1.ts,
-        main="Title",
-        xlab="Time",
-        ylab="Weekly Sales")
 
-for (i in 1:nrow(unique_pairs)){
-  temp.df <- train %>%
-    filter(Store==unique_pairs[i,1], Dept==unique_pairs[i,2]) %>%
-    select(5) #Weekly_sales
-  name_of_file <- paste("visualizations/store",unique_pairs[i,1],"_dept",unique_pairs[i,2],".png",sep="")
-  temp.ts <- ts(temp.df,frequency=52)
-  png(filename=name_of_file)
-  plot.ts(temp.ts)
-  dev.off()
-}

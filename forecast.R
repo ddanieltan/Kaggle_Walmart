@@ -1,7 +1,7 @@
 library("forecast")
 library("tseries")
-library("dplyr")
 library("plyr")
+library("dplyr")
 
 ###Test for stationarity using Augmented Dickey-Fuller Test
 #Create a time series object of Store 1, Dept 1
@@ -38,10 +38,27 @@ naive.f <- dlply(train, "id", function(x) stlf(ts(x[,2],frequency=52),method="na
 
 ###Time Series Clustering using Dynamic Time Warp
 library(dtwclust)
+#Random sampling of 50 time series
 
-#Random sampling of 60 time series
+sample_table <- matrix(0,nrow=50,ncol=143)
+for(i in 1:50){
+  temp_ts <- train %>%
+    filter(Store == unique_pairs[i,1], Dept == unique_pairs[i,2]) %>%
+    arrange(Date) %>%
+    select(5)
+  sample_table <- rbind(sample_table,t(temp_ts))
+  
+}
+s1d1 <- train %>%
+  filter(Store == 1, Dept == 1) %>%
+  arrange(Date) %>%
+  select(5) #Weekly_Sales
+
 n <- 10
 s <- sample(1:100, n)
 idx <- c(s, 100+s, 200+s, 300+s, 400+s, 500+s)
 sample_unique_pairs <- unique_pairs[idx,]
 #i need to figure out if I want to loop through train and creat 3331 time series objects
+
+###Perform DTW on 50 random time-series objects
+###Creating 50 time series objects for store-dept pairs
