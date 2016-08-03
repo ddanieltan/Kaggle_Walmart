@@ -1,6 +1,7 @@
-require("forecast")
-require("tseries")
-require("dplyr")
+library("forecast")
+library("tseries")
+library("dplyr")
+library("plyr")
 
 ###Test for stationarity using Augmented Dickey-Fuller Test
 #Create a time series object of Store 1, Dept 1
