@@ -4,16 +4,26 @@ library(dplyr)
 #in features.csv on the assumption that the strongest variable affecting
 #weekly sales is the seasonality of dates and isHoliday
 
-###Read in data with correct classes
+#Functions to read in data for train and test
 read.train <- function(){
-  #Classes for Store, Dept, Date, Weekly_Sales, isHoliday
-  cls <- c('factor','factor','Date','numeric','logical')
+  cls <- c('factor','factor','Date','numeric','logical') #Classes for Store, Dept, Date, Weekly_Sales, isHoliday
   train<- read.csv(file='data/train.csv',colClasses = cls)
 }
 
-###Read in data with correct classes
 read.test <- function(){
-  #Classes for Store, Dept, Date, isHoliday
-  cls <- c('factor','factor','Date','logical')
+  cls <- c('factor','factor','Date','logical') #Classes for Store, Dept, Date, isHoliday
   train<- read.csv(file='data/test.csv',colClasses = cls)
+}
+
+write.submission <- function(pred){
+  #Create a csv file for submission to kaggle
+  #Input: prediction data table
+  #Output: CSV with 2 columns - ID, Weekly_Sales
+  pred$ID <- paste0(pred$Store, "_",
+               pred$Dept, "_",
+               pred$Date)
+  submit.path <- paste0('submissions/',Sys.Date(),'.csv')
+  submission <- subset(pred,select=c('ID','Weekly_Sales'))
+  write.csv(submission,file=submit.path,row.names=FALSE)
+  
 }
