@@ -52,14 +52,14 @@ apply.forecast <- function(train,test,fname, ...){
 seasonal.naive <- function(train, test){
   # Computes seasonal naive forecasts
   #
-  # args:
+  # Input:
   # train - A matrix of Weekly_Sales values from the training set of dimension
   #         (number of weeeks in training data) x (number of stores)
   # test - An all-zeros matrix of dimension:
   #       (number of weeeks in training data) x (number of stores)
   #       The forecasts are written in place of the zeros.
   #
-  # returns:
+  # Output:
   #  the test(forecast) data frame with the forecasts filled in 
   h <- nrow(test)
   tr <- train[nrow(train) - (52:1) + 1,]
@@ -68,3 +68,25 @@ seasonal.naive <- function(train, test){
   test
 }
 
+tslm <- function(train, test){
+  # Computes a forecast using linear regression and seasonal dummy variables
+  #
+  # Input:
+  # train - A matrix of Weekly_Sales values from the training set of dimension
+  #         (number of weeeks in training data) x (number of stores)
+  # test - An all-zeros matrix of dimension:
+  #       (number of weeeks in training data) x (number of stores)
+  #       The forecasts are written in place of the zeros.
+  #
+  # Output:
+  #  the test(forecast) data frame with the forecasts filled in 
+  horizon <- nrow(test)
+  train[is.na(train)] <- 0
+  for(j in 2:ncol(train)){
+    s <- ts(train[, j], frequency=52)
+    model <- tslm(s ~ trend + season)
+    fc <- forecast(model, h=horizon)
+    test[, j] <- as.numeric(fc$mean)
+  }
+  test
+}
