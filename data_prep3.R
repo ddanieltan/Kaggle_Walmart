@@ -15,6 +15,7 @@ read.test <- function(){
   train<- read.csv(file='data/test.csv',colClasses = cls)
 }
 
+
 write.submission <- function(pred){
   #Create a csv file for submission to kaggle
   #Input: prediction data table
