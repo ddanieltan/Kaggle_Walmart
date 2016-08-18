@@ -102,7 +102,27 @@ cluster.f <- function (train,n.clusters){
   # Output:
   # train matrix of n clusters
   
-   
+}
+
+preprocess.svd <- function(train, n.comp){
+  # Replaces the training data with a rank-reduced approximation of itself.
+  # This is for noise reduction. The intuition is that characteristics
+  # that are common across stores (within the same department) are probably
+  # signal, while those that are unique to one store may be noise.
+  #
+  # args:
+  # train - A matrix of Weekly_Sales values from the training set of dimension
+  #         (number of weeeks in training data) x (number of stores)
+  # n.comp - the number of components to keep in the singular value
+  #         decomposition
+  #
+  # returns:
+  #  the rank-reduced approximation of the training data
+  train[is.na(train)] <- 0
+  z <- svd(train[, 2:ncol(train)], nu=n.comp, nv=n.comp)
+  s <- diag(z$d[1:n.comp])
+  train[, 2:ncol(train)] <- z$u %*% s %*% t(z$v)
+  train
 }
 
 arima.f <- function(train, test, n.comp){
@@ -158,23 +178,4 @@ fallback <- function(train, horizon){
   result[length(result) - horizon:1 + 1]
 }
 
-preprocess.svd <- function(train, n.comp){
-  # Replaces the training data with a rank-reduced approximation of itself.
-  # This is for noise reduction. The intuition is that characteristics
-  # that are common across stores (within the same department) are probably
-  # signal, while those that are unique to one store may be noise.
-  #
-  # args:
-  # train - A matrix of Weekly_Sales values from the training set of dimension
-  #         (number of weeeks in training data) x (number of stores)
-  # n.comp - the number of components to keep in the singular value
-  #         decomposition
-  #
-  # returns:
-  #  the rank-reduced approximation of the training data
-  train[is.na(train)] <- 0
-  z <- svd(train[, 2:ncol(train)], nu=n.comp, nv=n.comp)
-  s <- diag(z$d[1:n.comp])
-  train[, 2:ncol(train)] <- z$u %*% s %*% t(z$v)
-  train
-}
+
