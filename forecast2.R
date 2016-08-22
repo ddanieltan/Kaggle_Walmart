@@ -91,6 +91,26 @@ tslm <- function(train, test){
   test
 }
 
+library(TSclust)
+tsclust.f <- function (master_ts){
+  #Clusters time series from training data into n number of clusters.
+  #This function is called in preparation for ARIMA.
+  #The idea is that trend and seasonality is common across many departments as they are selling similar items.
+  # Input: 
+  # ts - A matrix of Weekly_Sales values from the training set of dimension
+  #         (number of weeks in training data) x (number of stores)
+  # n.clusters - the number of clusters
+  # Output:
+  # train matrix of n clusters
+  master_ts[is.na(master_ts)] <- 0
+  tsdist <- diss(master_ts, "ACF", p=0.05)
+  #perform hierachical clustering to the dist object
+  hc <- hclust(tsdist)
+  #show the results
+  plot(hc)
+  
+}
+
 cluster.f <- function (train,n.clusters){
   #Clusters time series from training data into n number of clusters.
   #This function is called in preparation for ARIMA.
