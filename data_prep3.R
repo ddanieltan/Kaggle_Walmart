@@ -18,7 +18,7 @@ read.test <- function(){
 }
 
 master.ts <- function(train){
-  master.ts <- dcast(train, Date~Store + Dept, value.var="Weekly_Sales")
+  master.ts <- dcast(train, Date~Store + Dept, value.var="Weekly_Sales",na.rm=TRUE)
   master.ts<- tbl_df(master.ts)
 }
 

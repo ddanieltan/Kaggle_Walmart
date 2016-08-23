@@ -7,12 +7,13 @@ test <- read.test()
 mts <- master.ts(train)
 mts
 
-
-
 pred1 <- apply.forecast(train,test,'seasonal.naive')
 pred2 <- apply.forecast(train,test,'tslm')
 pred3 <- apply.forecast(train,test,'arima.f',12)
 pred4 <- apply.forecast(train,test,'tsclust.f')
+
+clust1<- tsclust.f(mts)
+clust1
 
 ###Write a submission file for Kaggle
 write.submission(pred1)

@@ -19,7 +19,21 @@ library(reshape2)
 library(data.table)
 dcast(train, formula = Date~Weekly_Sales,value.var = c("Store","Dept"), sep=".") 
 
+cls <- c('factor','factor','Date','numeric','logical') #Classes for Store, Dept, Date, Weekly_Sales, isHoliday
+train.rmna<- read.csv(file='data/train.csv',colClasses = cls, na.strings = 0)
+train.rmna<-tbl_df(train.rmna)
 
-train.sub <- filter(train,row_number(Date)<=12)
-train.sub
-dcast(train.sub, Date~Store + Dept, value.var="Weekly_Sales")
+
+library(TSClust)
+tsdist <- diss(mts.rmna, "ACF", p=0.05) #this takes way too long
+hc <- hclust(tsdist)
+plot(hc)
+
+#to find sum of NAs in collumns
+sapply(mts.rmna, function(x) sum(is.na(x)))
+
+#removing NAs from mts
+mts.rmna <- mts[, colSums(is.na(mts)) == 0]
+mts.rmna <- subset(mts.rmna, select=-Date)
+
+

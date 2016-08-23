@@ -1,6 +1,7 @@
 library(dplyr)
 library(forecast)
 library(reshape)
+library(TSclust)
 
 apply.forecast <- function(train,test,fname, ...){
   ### This function loops a selected function across all departments
@@ -92,7 +93,7 @@ tslm <- function(train, test){
 }
 
 library(TSclust)
-tsclust.f <- function (master_ts){
+tsclust.f <- function (mts){
   #Clusters time series from training data into n number of clusters.
   #This function is called in preparation for ARIMA.
   #The idea is that trend and seasonality is common across many departments as they are selling similar items.
@@ -102,8 +103,8 @@ tsclust.f <- function (master_ts){
   # n.clusters - the number of clusters
   # Output:
   # train matrix of n clusters
-  master_ts[is.na(master_ts)] <- 0
-  tsdist <- diss(master_ts, "ACF", p=0.05)
+  
+  tsdist <- diss(mts, "ACF", p=0.05)
   #perform hierachical clustering to the dist object
   hc <- hclust(tsdist)
   #show the results
@@ -111,7 +112,7 @@ tsclust.f <- function (master_ts){
   
 }
 
-cluster.f <- function (train,n.clusters){
+tsclust.f <- function (train,n.clusters){
   #Clusters time series from training data into n number of clusters.
   #This function is called in preparation for ARIMA.
   #The idea is that trend and seasonality is common across many departments as they are selling similar items.
