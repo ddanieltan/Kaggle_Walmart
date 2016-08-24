@@ -3,7 +3,6 @@ title: "Project Summary"
 author: "Daniel Tan"
 date: "24 August 2016"
 output: html_document
-toc: true
 ---
 
 
@@ -13,40 +12,61 @@ toc: true
 In 2014, Walmart held a Kaggle competition to challenge Kagglers to build an accurate prediction of future sales based on historical data.
 
 
-The full competition required participants 
+I have chosen a scoped down version of this competition as my Springboard Capstone Project. If you would like to see the full details of the original Kaggle competition, please visit [this link](https://www.kaggle.com/c/walmart-recruiting-store-sales-forecasting).
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## 1. Data Preparation
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+I begin with 2 datasets:
+
+* __train.csv__: Historical training data from 5/2/2010 to 26/10/2011, containing Store number, Department number, Date of the week, Weekly sales figure and isHoliday boolean
+
+* __test.csv__: Test data for 2/11/2012 to 26/7/2013, containing collumns for Store, Department, Date and IsHoliday
 
 
 ```r
-mts[,1:10]
+# Snippet of train data
+train
 ```
 
 ```
-## Source: local data frame [143 x 10]
+## Source: local data frame [421,570 x 5]
 ## 
-##          Date      1_1     1_10     1_11     1_12     1_13     1_14
-##        (date)    (dbl)    (dbl)    (dbl)    (dbl)    (dbl)    (dbl)
-## 1  2010-02-05 24924.50 30721.50 24213.18  8449.54 41969.29 19466.91
-## 2  2010-02-12 46039.49 31494.77 21760.75  8654.07 36476.40 18129.02
-## 3  2010-02-19 41595.55 29634.13 18706.21  9165.98 37857.68 17491.36
-## 4  2010-02-26 19403.54 27921.96 17306.61  9015.37 37467.32 16118.26
-## 5  2010-03-05 21827.90 33299.27 19082.90 10239.06 40423.95 18268.78
-## 6  2010-03-12 21043.39 28208.00 17864.32 12386.15 35833.07 15331.75
-## 7  2010-03-19 22136.64 33731.81 19738.42 12917.55 36807.21 12738.78
-## 8  2010-03-26 26229.21 31406.96 17592.13 11865.53 35431.73 12832.47
-## 9  2010-04-02 57258.43 31794.04 21762.46 12033.50 38104.53 14333.75
-## 10 2010-04-09 42960.91 32486.28 22186.81 10109.00 37638.44 12874.07
-## ..        ...      ...      ...      ...      ...      ...      ...
-## Variables not shown: 1_16 (dbl), 1_17 (dbl), 1_18 (dbl)
+##     Store   Dept       Date Weekly_Sales IsHoliday
+##    (fctr) (fctr)     (date)        (dbl)     (lgl)
+## 1       1      1 2010-02-05     24924.50     FALSE
+## 2       1      1 2010-02-12     46039.49      TRUE
+## 3       1      1 2010-02-19     41595.55     FALSE
+## 4       1      1 2010-02-26     19403.54     FALSE
+## 5       1      1 2010-03-05     21827.90     FALSE
+## 6       1      1 2010-03-12     21043.39     FALSE
+## 7       1      1 2010-03-19     22136.64     FALSE
+## 8       1      1 2010-03-26     26229.21     FALSE
+## 9       1      1 2010-04-02     57258.43     FALSE
+## 10      1      1 2010-04-09     42960.91     FALSE
+## ..    ...    ...        ...          ...       ...
 ```
 
-## Including Plots
+```r
+# Snippet of test data
+test
+```
 
-You can also embed plots, for example:
-
-![plot of chunk pressure](figure/pressure-1.png)
+```
+## Source: local data frame [115,064 x 4]
+## 
+##     Store   Dept       Date IsHoliday
+##    (fctr) (fctr)     (date)     (lgl)
+## 1       1      1 2012-11-02     FALSE
+## 2       1      1 2012-11-09     FALSE
+## 3       1      1 2012-11-16     FALSE
+## 4       1      1 2012-11-23      TRUE
+## 5       1      1 2012-11-30     FALSE
+## 6       1      1 2012-12-07     FALSE
+## 7       1      1 2012-12-14     FALSE
+## 8       1      1 2012-12-21     FALSE
+## 9       1      1 2012-12-28      TRUE
+## 10      1      1 2013-01-04     FALSE
+## ..    ...    ...        ...       ...
+```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

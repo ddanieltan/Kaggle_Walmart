@@ -3,7 +3,6 @@ title: "Project Summary"
 author: "Daniel Tan"
 date: "24 August 2016"
 output: html_document
-toc: true
 ---
 
 ```{r setup, include=FALSE}
@@ -21,22 +20,22 @@ mts <- master.ts(train)
 In 2014, Walmart held a Kaggle competition to challenge Kagglers to build an accurate prediction of future sales based on historical data.
 
 
-The full competition required participants 
+I have chosen a scoped down version of this competition as my Springboard Capstone Project. If you would like to see the full details of the original Kaggle competition, please visit [this link](https://www.kaggle.com/c/walmart-recruiting-store-sales-forecasting).
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## 1. Data Preparation
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+I begin with 2 datasets:
 
-```{r cars}
-mts[,1:10]
-```
+* __train.csv__: Historical training data from 5/2/2010 to 26/10/2011, containing Store number, Department number, Date of the week, Weekly sales figure and isHoliday boolean
 
-## Including Plots
+* __test.csv__: Test data for 2/11/2012 to 26/7/2013, containing collumns for Store, Department, Date and IsHoliday
 
-You can also embed plots, for example:
+```{r, echo=TRUE}
+# Snippet of train data
+train
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+# Snippet of test data
+test
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
