@@ -24,11 +24,11 @@ I have chosen a scoped down version of this competition as my Springboard Capsto
 
 ## 1. Data Preparation
 
-I begin with 2 datasets:
+I begin with 2 data sets:
 
 * __train.csv__: Historical training data from 5/2/2010 to 26/10/2011, containing Store number, Department number, Date of the week, Weekly sales figure and isHoliday boolean
 
-* __test.csv__: Test data for 2/11/2012 to 26/7/2013, containing collumns for Store, Department, Date and IsHoliday
+* __test.csv__: Test data for 2/11/2012 to 26/7/2013, containing columns for Store, Department, Date and IsHoliday
 
 ```{r, echo=TRUE}
 # Snippet of train data
@@ -38,4 +38,16 @@ train
 test
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+A quick look through __train__ reveals that there are a total of 45 unique store numbers from 1 to 45. And, a total of 81 unique dept numbers from 1 to 99. This creates 3331 unique store-dept pairs. I.e. 3331 time-series, each with a frequency of 143 (roughly 2+ years of weekly sales date).
+
+```{r, echo=TRUE}
+unique(train[,c("Store","Dept")])
+```
+
+To prepare the training data for modelling, I reshaped the data frame to a 143 x 3331 matrix. Each column in the matrix represents a time-series for 1 store-dept pair.
+
+```{r, echo=FALSE}
+mts[,1:5]
+```
+
+## 2. Modeling

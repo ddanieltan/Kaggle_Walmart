@@ -37,7 +37,7 @@ sapply(mts.test.pairs, function(x) sum(is.na(x)))
 mts.rmna <- mts.test.pairs[, colSums(is.na(mts.test.pairs)) == 0] #2660
 
 #Performing TSClust
-library(TSClust)
+library(TSclust)
 tsdist <- diss(mts.rmna, "ACF", p=0.05) #this takes way too long
 
 #Performing correlation analysis
