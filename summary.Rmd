@@ -3,6 +3,7 @@ title: "Project Summary"
 author: "Daniel Tan"
 date: "24 August 2016"
 output: html_document
+toc: true
 ---
 
 ```{r setup, include=FALSE}
@@ -17,10 +18,10 @@ mts <- master.ts(train)
 
 ## Background
 
-In 2014, Walmart held a Kaggle competition to challenge Kagglers to build an accurate prediction of future sales, given historical sales data.
+In 2014, Walmart held a Kaggle competition to challenge Kagglers to build an accurate prediction of future sales based on historical data.
 
 
-The full competition required participants to
+The full competition required participants 
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
