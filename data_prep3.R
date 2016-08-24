@@ -1,4 +1,5 @@
 library(dplyr)
+library(reshape2)
 
 #In this iteration, I have decided to ignore the features provided
 #in features.csv on the assumption that the strongest variable affecting
