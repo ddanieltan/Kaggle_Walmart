@@ -34,7 +34,7 @@ mts.test.pairs <-mts[,col.num] #3158
 sapply(mts.test.pairs, function(x) sum(is.na(x)))
 
 #removing NAs from mts.test.pairs
-mts.rmna <- mts.test.pairs[, colSums(is.na(mts.test.pairs)) == 0] #2660
+mts.rmna <- mts.test.pairs[, colSums(is.na(mts.test.pairs)) == 0] #2660 - sample 1000
 
 #Performing TSClust
 library(TSclust)
@@ -47,3 +47,26 @@ hc<-hclust(mts.cor) #Error in if (is.na(n) || n > 65536L) stop("size cannot be N
 #trying to use corrplot to visualize mts.cor
 library(corrplot)
 mts.corrplot<- corrplot(mts.cor,method="square",order="hclust")
+
+##
+store.matrix.total <- train %>%
+  group_by(Store)%>%
+  summarise(Weekly_Sales=sum(Weekly_Sales))
+store.matrix.total$Store<-as.integer(store.matrix.total$Store)
+
+
+##
+store.matrix <- dcast(train,formula=Date~Store,value.var = "Weekly_Sales",fun.aggregate = sum)
+store.matrix <- tbl_df(store.matrix)
+store.matrix
+
+##
+#Performing TSClust
+library(TSclust)
+tsdist <-select(store.matrix,-1) 
+tsdist <- diss(tsdist, "ACF", p=0.05)
+hc<-hclust(tsdist)
+plot(hc)
+
+##
+rect.hclust(hc,h=0.05)

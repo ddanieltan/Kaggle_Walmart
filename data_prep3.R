@@ -7,13 +7,13 @@ library(reshape2)
 
 #Functions to read in data for train and test
 read.train <- function(){
-  cls <- c('factor','factor','Date','numeric','logical') #Classes for Store, Dept, Date, Weekly_Sales, isHoliday
+  cls <- c('integer','integer','Date','numeric','logical') #Classes for Store, Dept, Date, Weekly_Sales, isHoliday
   train<- read.csv(file='data/train.csv',colClasses = cls)
   train<-tbl_df(train)
 }
 
 read.test <- function(){
-  cls <- c('factor','factor','Date','logical') #Classes for Store, Dept, Date, isHoliday
+  cls <- c('integer','integer','Date','logical') #Classes for Store, Dept, Date, isHoliday
   test<- read.csv(file='data/test.csv',colClasses = cls)
   test<- tbl_df(test)
 }
