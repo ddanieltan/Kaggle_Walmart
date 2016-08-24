@@ -16,3 +16,5 @@ write.submission(pred1)
 write.submission(pred2)
 write.submission(pred3)
 
+###Write summary.rmd as summary.md to commit to Github
+knit(input="summary.rmd", output = "summary.md") 
