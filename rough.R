@@ -64,9 +64,21 @@ store.matrix
 #Performing TSClust
 library(TSclust)
 tsdist <-select(store.matrix,-1) 
+tsdist<-scale(tsdist) #standardising data points
 tsdist <- diss(tsdist, "ACF", p=0.05)
 hc<-hclust(tsdist)
 plot(hc)
 
 ##
-rect.hclust(hc,h=0.05)
+rect.hclust(hc,k=5) # 5 clusters
+rect.hclust(hc,h=0.04) #4 clusters, my choice
+
+##
+clust.vec <- cutree(hc,h=0.04)
+clust.vec[hc$order]
+
+store.matrix.clust <- cbind(store.matrix, cluster_id=clust.vec)
+store.matrix.clust <- tbl_df(store.matrix.clust)
+tail(store.matrix.clust)
+store.matrix.clust %>%
+  filter(cluster_id==4)
