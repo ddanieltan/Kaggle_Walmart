@@ -31,10 +31,10 @@ col.num <- which(colnames(mts) %in% unique.test.pairs$id) #3158
 mts.test.pairs <-mts[,col.num] #3158
 
 #check for NAs
-sapply(mts.test.pairs, function(x) sum(is.na(x)))
+sapply(store.matrix, function(x) sum(is.na(x)))
 
 #removing NAs from mts.test.pairs
-mts.rmna <- mts.test.pairs[, colSums(is.na(mts.test.pairs)) == 0] #2660 - sample 1000
+mts.rmna <- mts.test.pairs[, colSums(is.na(mts.test.pairs)) == 0] #2660 
 
 #Performing TSClust
 library(TSclust)
@@ -63,22 +63,72 @@ store.matrix
 ##
 #Performing TSClust
 library(TSclust)
-tsdist <-select(store.matrix,-1) 
+tsdist <-t(select(store.matrix,-1)) #remove date column
 tsdist<-scale(tsdist) #standardising data points
 tsdist <- diss(tsdist, "ACF", p=0.05)
 hc<-hclust(tsdist)
 plot(hc)
 
 ##
-rect.hclust(hc,k=5) # 5 clusters
-rect.hclust(hc,h=0.04) #4 clusters, my choice
+rect.hclust(hc,k=4) # 4 clusters, my choice
+rect.hclust(hc,h=0.1) #5 clusters
 
 ##
-clust.vec <- cutree(hc,h=0.04)
+clust.vec <- cutree(hc,k=4)
 clust.vec[hc$order]
 
-store.matrix.clust <- cbind(store.matrix, cluster_id=clust.vec)
-store.matrix.clust <- tbl_df(store.matrix.clust)
-tail(store.matrix.clust)
-store.matrix.clust %>%
-  filter(cluster_id==4)
+#temp remove date column from store matrix
+store.matrix.wodate <- store.matrix[,-1]
+
+##Creating clusters
+cluster1 <- store.matrix.wodate[,clust.vec==1]
+cluster2 <- store.matrix.wodate[,clust.vec==2]
+cluster3 <- store.matrix.wodate[,clust.vec==3]
+cluster4 <- store.matrix.wodate[,clust.vec==4]
+
+##Force clusters in a ts() object
+cluster1.ts <-ts(rowMeans(cluster1),frequency=52)
+cluster2.ts <-ts(rowMeans(cluster2),frequency=52)
+cluster3.ts <-ts(rowMeans(cluster3),frequency=52)
+cluster4.ts <-ts(rowMeans(cluster4),frequency=52)
+
+library('forecast')
+library('tseries')
+#Perform adf test on clusters
+adf.test(cluster1.ts, alternative='stationary') #Dickey-Fuller = -5.279, Lag order = 5, p-value = 0.01
+adf.test(cluster2.ts, alternative='stationary') #Dickey-Fuller = -5.2943, Lag order = 5, p-value = 0.01
+adf.test(cluster3.ts, alternative='stationary') #Dickey-Fuller = -5.3377, Lag order = 5, p-value = 0.01
+adf.test(cluster4.ts, alternative='stationary') #Dickey-Fuller = -5.1801, Lag order = 5, p-value = 0.01
+
+#ndiffs(cluster1.ts,test="adf")
+
+#Decompose
+cluster1.stl<-stl(cluster1.ts,s.window="periodic")
+plot(cluster1.stl,main="STL decomposition for Cluster 1")
+
+cluster1.decomp<-decompose(cluster1.ts)
+plot(cluster1.decomp)
+
+#TSdisplay
+tsdisplay(cluster1.ts)
+tsdisplay(diff(cluster1.ts,52))
+tsdisplay(diff(diff(cluster1.ts)))
+
+#Loop to find pdq which minimizes AIC
+azfinal.aic <- Inf
+azfinal.order <- c(0,0,0)
+for (p in 1:5) for (d in 0:1) for (q in 1:4) {
+  azcurrent.aic <- AIC(Arima(cluster1.ts, order=c(p, d, q)))
+  if (azcurrent.aic < azfinal.aic) {
+    azfinal.aic <- azcurrent.aic
+    azfinal.order <- c(p, d, q)
+    azfinal.arima <- Arima(cluster1.ts, order=azfinal.order)
+       }
+}
+azfinal.order
+
+auto.arima(cluster1.ts, seasonal=TRUE)
+Arima(cluster1.ts,order=c(4,1,3))
+
+#build Arima
+cluster1.fit<- Arima(cluster1.ts, order=c(1,1,1))
