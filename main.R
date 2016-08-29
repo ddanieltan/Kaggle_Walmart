@@ -41,11 +41,17 @@ cluster2.ts <-ts(rowMeans(cluster2),frequency=52)
 cluster3.ts <-ts(rowMeans(cluster3),frequency=52)
 cluster4.ts <-ts(rowMeans(cluster4),frequency=52)
 
-
-
 ###3. Time Series Forecasting
 #
 #
+#Test for stationarity by performing ADF test
+adf.test(cluster1.ts, alternative='stationary') #Dickey-Fuller = -5.279, Lag order = 5, p-value = 0.01
+adf.test(cluster2.ts, alternative='stationary') #Dickey-Fuller = -5.2943, Lag order = 5, p-value = 0.01
+adf.test(cluster3.ts, alternative='stationary') #Dickey-Fuller = -5.3377, Lag order = 5, p-value = 0.01
+adf.test(cluster4.ts, alternative='stationary') #Dickey-Fuller = -5.1801, Lag order = 5, p-value = 0.01
+#
+
+###4. Comparing Arima Forecasts with 2 simpler forecasts
 pred1 <- apply.forecast(train,test,'seasonal.naive')
 pred2 <- apply.forecast(train,test,'tslm')
 pred3 <- apply.forecast(train,test,'arima.f',12)

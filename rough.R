@@ -130,7 +130,7 @@ auto.arima(cluster1.ts, seasonal=TRUE)
 Arima(cluster1.ts,order=c(5,0,5))
 Arima(cluster1.ts,order=c(1,0,1))
 Arima(cluster1.ts,order=c(5,0,5), include.mean = FALSE)
-Arima(cluster1.ts,order=c(1,0,1), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)
+Arima(cluster1.ts,order=c(1,0,1), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)#AIC=2174.26   AICc=2174.54   BIC=2181.79
 
 tsdisplay(cluster2.ts)
 Arima(cluster2.ts,order=c(1,0,2), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)#AIC=2221.03   AICc=2221.49   BIC=2231.07
