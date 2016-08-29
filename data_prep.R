@@ -1,49 +1,41 @@
 library(dplyr)
-library(tidyr)
-library(reshape)
+library(reshape2)
 
-#read in data
-dfStore <- read.csv(file='data/stores.csv')
-dfTrain <- read.csv(file='data/train.csv')
-dfTest <- read.csv(file='data/test.csv')
-dfFeatures <- read.csv(file='data/features.csv')
-submission = read.csv(file='data/sampleSubmission.csv',header=TRUE,as.is=TRUE)
+#In this iteration, I have decided to ignore the features provided
+#in features.csv on the assumption that the strongest variable affecting
+#weekly sales is the seasonality of dates and isHoliday
 
-# Merge Type and Size
-dfTrainTmp <- merge(x=dfTrain, y=dfStore, all.x=TRUE)
-dfTestTmp <- merge(x=dfTest, y=dfStore, all.x=TRUE)
+#Functions to read in data for train and test
+read.train <- function(){
+  cls <- c('integer','integer','Date','numeric','logical') #Classes for Store, Dept, Date, Weekly_Sales, isHoliday
+  train<- read.csv(file='data/train.csv',colClasses = cls)
+  train<-tbl_df(train)
+}
 
-# Merge all the features
-train <- merge(x=dfTrainTmp, y=dfFeatures, all.x=TRUE)
-test <- merge(x=dfTestTmp, y=dfFeatures, all.x=TRUE)
+read.test <- function(){
+  cls <- c('integer','integer','Date','logical') #Classes for Store, Dept, Date, isHoliday
+  test<- read.csv(file='data/test.csv',colClasses = cls)
+  test<- tbl_df(test)
+}
 
-#### Convert Date to character
-dfTrain$Date <- as.character(dfTrain$Date)
-dfTest$Date <- as.character(dfTest$Date)
-dfFeatures$Date <- as.character(dfFeatures$Date)
+master.ts <- function(train){
+  master.ts <- dcast(train, Date~Store + Dept, value.var="Weekly_Sales",na.rm=TRUE)
+  master.ts<- tbl_df(master.ts)
+}
 
-#### Compute the number of days back to baseline date
-baseline_date <- as.Date('2010-02-05')
-dfTrain$Days <- as.numeric(as.Date(dfTrain$Date) - baseline_date)
-dfTest$Days <- as.numeric(as.Daplote(dfTest$Date) - baseline_date)
 
-#### Compute the corresponding day index for plotting figure
-all_dates <- sort(unique(dfFeatures$Date))
-dfTrain$Day_Index <- sapply(dfTrain$Date, function(d)which(d==all_dates))
-dfTest$Day_Index <- sapply(dfTest$Date, function(d)which(d==all_dates))
 
-#### Split Date into Year/Month/Day
-## train
-d <- strsplit(dfTrain$Date, '-')
-d <- as.numeric(unlist(d))
-d <- matrix(d, dim(dfTrain)[1], 3, byrow=T)
-dfTrain$Year <- d[,1]
-dfTrain$Month <- d[,2]
-dfTrain$Day <- d[,3]
-## test
-d <- strsplit(dfTest$Date, '-')
-d <- as.numeric(unlist(d))
-d <- matrix(d, dim(dfTest)[1], 3, byrow=T)
-dfTest$Year <- d[,1]
-dfTest$Month <- d[,2]
-dfTest$Day <- d[,3]
+write.submission <- function(pred){
+  #Create a csv file for submission to kaggle
+  #Input: prediction data table
+  #Output: CSV with 2 columns - ID, Weekly_Sales
+  pred$ID <- paste0(pred$Store, "_",
+               pred$Dept, "_",
+               pred$Date)
+  submit.path <- paste0('submissions/',Sys.Date(),'.csv')
+  submission <- subset(pred,select=c('ID','Weekly_Sales'))
+  write.csv(submission,file=submit.path,row.names=FALSE)
+  
+}
+
+
