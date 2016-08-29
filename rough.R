@@ -117,7 +117,7 @@ tsdisplay(diff(diff(cluster1.ts)))
 #Loop to find pdq which minimizes AIC
 azfinal.aic <- Inf
 azfinal.order <- c(0,0,0)
-for (p in 1:5) for (d in 0:1) for (q in 1:4) {
+for (p in 1:5) for (d in 0:1) for (q in 1:5) {
   azcurrent.aic <- AIC(Arima(cluster1.ts, order=c(p, d, q)))
   if (azcurrent.aic < azfinal.aic) {
     azfinal.aic <- azcurrent.aic
@@ -128,7 +128,31 @@ for (p in 1:5) for (d in 0:1) for (q in 1:4) {
 azfinal.order
 
 auto.arima(cluster1.ts, seasonal=TRUE)
-Arima(cluster1.ts,order=c(4,1,3))
+Arima(cluster1.ts,order=c(5,0,5))
+Arima(cluster1.ts,order=c(1,0,1))
+Arima(cluster1.ts,order=c(5,0,5), include.mean = FALSE)
+Arima(cluster1.ts,order=c(1,0,1), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)
 
-#build Arima
-cluster1.fit<- Arima(cluster1.ts, order=c(1,1,1))
+tsdisplay(cluster2.ts)
+Arima(cluster2.ts,order=c(1,0,2), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)
+
+tsdisplay(cluster3.ts)
+Arima(cluster3.ts,order=c(5,0,2), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)#AIC=2233.48   AICc=2235.24   BIC=2253.57
+Arima(cluster3.ts,order=c(1,0,1), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)#AIC=2225.74   AICc=2226.02   BIC=2233.28
+Arima(cluster3.ts,order=c(1,0,2), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)#AIC=2227.62   AICc=2228.08   BIC=2237.66
+
+tsdisplay(cluster4.ts)
+Arima(cluster4.ts,order=c(1,0,1), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)#AIC=2207.87   AICc=2208.15   BIC=2215.41
+Arima(cluster4.ts,order=c(5,0,1), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)#AIC=2214.09   AICc=2215.44   BIC=2231.66
+Arima(cluster4.ts,order=c(1,0,4), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)#AIC=2211.55   AICc=2212.55   BIC=2226.62
+
+#143 weeks, 120 train, 23 test
+cluster1.train<-ts(cluster1.ts,start=1,end=120)
+cluster1.test<-ts(cluster1.ts,start=121,end=143)
+cluster1.fit<-Arima(cluster1.train,order=c(1,0,1), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)
+cluster1.fc<-forecast(cluster1.fit,h=23)
+accuracy(cluster1.fc,cluster1.test)
+
+cluster2.train<-ts(cluster1.ts,start=1,end=120)
+cluster3.train<-ts(cluster1.ts,start=1,end=120)
+cluster4.train<-ts(cluster1.ts,start=1,end=120)
