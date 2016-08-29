@@ -1,10 +1,6 @@
 library(dplyr)
 library(reshape2)
 
-#In this iteration, I have decided to ignore the features provided
-#in features.csv on the assumption that the strongest variable affecting
-#weekly sales is the seasonality of dates and isHoliday
-
 #Functions to read in data for train and test
 read.train <- function(){
   cls <- c('integer','integer','Date','numeric','logical') #Classes for Store, Dept, Date, Weekly_Sales, isHoliday
@@ -18,11 +14,15 @@ read.test <- function(){
   test<- tbl_df(test)
 }
 
-master.ts <- function(train){
-  master.ts <- dcast(train, Date~Store + Dept, value.var="Weekly_Sales",na.rm=TRUE)
-  master.ts<- tbl_df(master.ts)
+reshape.by.stores <- function(train){
+  #Reshape the train data into a matrix containing the weekly sales for each store
+  #This is preparation required for time series clustering
+  #Input: Train dataset which contain multiple rows x 4 column variables
+  #Output: Matrix of 143 weekly sales observations x 45 stores
+  store.matrix <- dcast(train,formula=Date~Store,value.var = "Weekly_Sales",fun.aggregate = sum)
+  store.matrix <- tbl_df(store.matrix)
+  return(store.matrix)
 }
-
 
 
 write.submission <- function(pred){

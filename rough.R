@@ -71,7 +71,6 @@ plot(hc)
 
 ##
 rect.hclust(hc,k=4) # 4 clusters, my choice
-rect.hclust(hc,h=0.1) #5 clusters
 
 ##
 clust.vec <- cutree(hc,k=4)
@@ -118,7 +117,7 @@ tsdisplay(diff(diff(cluster1.ts)))
 azfinal.aic <- Inf
 azfinal.order <- c(0,0,0)
 for (p in 1:5) for (d in 0:1) for (q in 1:5) {
-  azcurrent.aic <- AIC(Arima(cluster1.ts, order=c(p, d, q)))
+  azcurrent.aic <- AIC(Arima(cluster2.ts, order=c(p, d, q)))
   if (azcurrent.aic < azfinal.aic) {
     azfinal.aic <- azcurrent.aic
     azfinal.order <- c(p, d, q)
@@ -134,7 +133,8 @@ Arima(cluster1.ts,order=c(5,0,5), include.mean = FALSE)
 Arima(cluster1.ts,order=c(1,0,1), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)
 
 tsdisplay(cluster2.ts)
-Arima(cluster2.ts,order=c(1,0,2), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)
+Arima(cluster2.ts,order=c(1,0,2), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)#AIC=2221.03   AICc=2221.49   BIC=2231.07
+Arima(cluster2.ts,order=c(1,0,5), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)
 
 tsdisplay(cluster3.ts)
 Arima(cluster3.ts,order=c(5,0,2), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)#AIC=2233.48   AICc=2235.24   BIC=2253.57
