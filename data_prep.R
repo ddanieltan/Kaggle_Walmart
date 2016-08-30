@@ -1,15 +1,16 @@
 library(dplyr)
 library(reshape2)
 
-#Functions to read in data for train and test
 read.train <- function(){
-  cls <- c('integer','integer','Date','numeric','logical') #Classes for Store, Dept, Date, Weekly_Sales, isHoliday
+  #Load train data
+  cls <- c('factor','factor','Date','numeric','logical') #Classes for Store, Dept, Date, Weekly_Sales, isHoliday
   train<- read.csv(file='data/train.csv',colClasses = cls)
   train<-tbl_df(train)
 }
 
 read.test <- function(){
-  cls <- c('integer','integer','Date','logical') #Classes for Store, Dept, Date, isHoliday
+  #Load test data
+  cls <- c('factor','factor','Date','logical') #Classes for Store, Dept, Date, isHoliday
   test<- read.csv(file='data/test.csv',colClasses = cls)
   test<- tbl_df(test)
 }
@@ -24,10 +25,9 @@ reshape.by.stores <- function(train){
   return(store.matrix)
 }
 
-
 write.submission <- function(pred){
   #Create a csv file for submission to kaggle
-  #Input: prediction data table
+  #Input: prediction matrix
   #Output: CSV with 2 columns - ID, Weekly_Sales
   pred$ID <- paste0(pred$Store, "_",
                pred$Dept, "_",

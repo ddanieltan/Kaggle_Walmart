@@ -3,8 +3,34 @@ library(forecast)
 library(reshape)
 library(TSclust)
 
+tsclust.f <- function (mts){
+  #Clusters time series from training data into n number of clusters.
+  #This function is called in preparation for ARIMA.
+  #The idea is that trend and seasonality is common across many departments as they are selling similar items.
+  # Input: 
+  # ts - A matrix of Weekly_Sales values from the training set of dimension
+  #         (number of weeks in training data) x (number of stores)
+  # n.clusters - the number of clusters
+  # Output:
+  # train matrix of n clusters
+  
+  tsdist <- diss(mts, "ACF", p=0.05)
+  #perform hierachical clustering to the dist object
+  hc <- hclust(tsdist)
+  #show the results
+  plot(hc)
+  
+}
+
+calc.mape <- function(timeseries,arima.fit){
+  train.m <-ts(timeseries,start=1,end=120)
+  test.m <-ts(timeseries,start=121,end=143)
+  fc <-forecast(arima.fit,h=23)
+  return(accuracy(fc,test.m)[2,5])
+}
+
 apply.forecast <- function(train,test,fname, ...){
-  ### This function loops a selected function across all departments
+  ### This function applies the selected forecast function on the training data and outputs a prediction for the dates specific from the test data
   #Input: Train data table, Test data table, function
   #Output: Prediction data table
   
@@ -92,77 +118,17 @@ tslm <- function(train, test){
   test
 }
 
-library(TSclust)
-tsclust.f <- function (mts){
-  #Clusters time series from training data into n number of clusters.
-  #This function is called in preparation for ARIMA.
-  #The idea is that trend and seasonality is common across many departments as they are selling similar items.
-  # Input: 
-  # ts - A matrix of Weekly_Sales values from the training set of dimension
-  #         (number of weeks in training data) x (number of stores)
-  # n.clusters - the number of clusters
-  # Output:
-  # train matrix of n clusters
-  
-  tsdist <- diss(mts, "ACF", p=0.05)
-  #perform hierachical clustering to the dist object
-  hc <- hclust(tsdist)
-  #show the results
-  plot(hc)
-  
-}
-
-arima.f <- function(train, test, n.comp){
-  # Replaces the training data with a rank-reduced approximation of itself
-  # and then produces seasonal arima forecasts for each store.
-  #
-  # args:
-  # train - A matrix of Weekly_Sales values from the training set of dimension
-  #         (number of weeeks in training data) x (number of stores)
-  # test - An all-zeros matrix of dimension:
-  #       (number of weeeks in training data) x (number of stores)
-  #       The forecasts are written in place of the zeros.
-  # n.comp - the number of components to keep in the singular value
-  #         decomposition that is performed for preprocessing
-  #
-  # returns:
-  #  the test(forecast) data frame with the forecasts filled in 
+arima.m <-function(train,test){
   horizon <- nrow(test)
-  tr <- preprocess.svd(train, n.comp)
+  tr<-train
   for(j in 2:ncol(tr)){
-    if(sum(is.na(train[, j])) > nrow(train)/3){
-      # Use DE model as fallback
-      test[, j] <- fallback(tr[,j], horizon)
-      store.num <- names(train)[j]
-      print(paste('Fallback on store:', store.num))
-    }else{
-      # fit arima model
-      s <- ts(tr[, j], frequency=52)
-      model <- auto.arima(s, ic='bic', seasonal.test='ch')
-      fc <- forecast(model, h=horizon)
-      test[, j] <- as.numeric(fc$mean)
-    }
+    # fit arima model
+    s <- ts(tr[, j], frequency=52)
+    model <- Arima(s,order=c(1,0,1), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)
+    fc <- forecast(model, h=horizon)
+    test[, j] <- as.numeric(fc$mean)
   }
   test
-}
-
-fallback <- function(train, horizon){
-  # This method is a fallback forecasting method in the case that there are
-  # enough NA's to possibly crash arima models. It takes one seasonal 
-  # difference, forecasts with a level-only exponential model, and then
-  # inverts the seasonal difference.
-  # 
-  # args:
-  # train - a vector of training data for one store
-  # horizon - the forecast horizon in weeks
-  #
-  # returns:
-  #  a vector of forecast values
-  s <- ts(train, frequency=52)
-  s[is.na(s)] <- 0
-  fc <- ses(diff(s, 52), h=horizon)
-  result <- diffinv(fc$mean, lag=52, xi=s[length(s) - 51:0])
-  result[length(result) - horizon:1 + 1]
 }
 
 

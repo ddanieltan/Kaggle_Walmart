@@ -147,8 +147,8 @@ Arima(cluster4.ts,order=c(5,0,1), seasonal = list(order = c(0,1,0), period = 52)
 Arima(cluster4.ts,order=c(1,0,4), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)#AIC=2211.55   AICc=2212.55   BIC=2226.62
 
 #143 weeks, 120 train, 23 test
-cluster1.train<-ts(cluster1.ts,start=1,end=120)
-cluster1.test<-ts(cluster1.ts,start=121,end=143)
+cluster1.train<-ts(cluster4.ts,start=1,end=120)
+cluster1.test<-ts(cluster4.ts,start=121,end=143)
 cluster1.fit<-Arima(cluster1.train,order=c(1,0,1), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)
 cluster1.fc<-forecast(cluster1.fit,h=23)
 accuracy(cluster1.fc,cluster1.test)
@@ -156,3 +156,89 @@ accuracy(cluster1.fc,cluster1.test)
 cluster2.train<-ts(cluster1.ts,start=1,end=120)
 cluster3.train<-ts(cluster1.ts,start=1,end=120)
 cluster4.train<-ts(cluster1.ts,start=1,end=120)
+
+
+### Testing
+test.frame.mine <- data.frame(Date=as.Date(unique(test$Date)),
+                         Store=numeric(39),
+                         Dept=numeric(39),
+                         Weekly_Sales=numeric(39))
+
+#Creating a forecast frame
+test.dates <- unique(test$Date)
+num.test.dates <- length(test.dates)
+all.stores <- unique(test$Store)
+num.stores <- length(all.stores)
+test.depts <- unique(test$Dept)
+forecast.frame <- data.frame(Date=rep(test.dates, num.stores),
+                             Store=rep(all.stores, each=num.test.dates))
+
+#Creating a train frame
+pred <- test
+pred$Weekly_Sales <- 0
+train.dates <- unique(train$Date)
+num.train.dates <- length(train.dates)
+train.frame <- data.frame(Date=rep(train.dates, num.stores),
+                          Store=rep(all.stores, each=num.train.dates))
+
+tr.d <- train.frame
+tr.d <- left_join(tr.d, train[train$Dept==1, c('Store','Date','Weekly_Sales')])
+tr.d <- cast(tr.d, Date ~ Store)
+
+
+fc.d <- forecast.frame
+fc.d$Weekly_Sales <- 0
+fc.d <- cast(fc.d, Date ~ Store)
+
+
+###Make my arima forecast frame
+cluster1.fc<-forecast(cluster1.fit,h=39)$mean
+colnames(cluster1)
+mean.of.depts <- matrix()
+for (i in 1:length(colnames(cluster1))){
+  dept.name<-colnames(cluster1)[i]
+  mean.of.depts[[dept.name]] <- sum(cluster1[,i])/sum(cluster1)
+}
+mean.of.depts
+
+cluster1.matrix <- matrix()
+for (i in 1:length(cluster1.fc)){
+  next.row<-cluster1.fc[i]*mean.of.depts
+  cluster1.matrix[,i]<-next.row
+}
+cluster1.matrix
+
+test.frame.mine <- data.frame(Date=as.Date(unique(test$Date)),
+                              '1'=numeric(39),
+                              '6'=numeric(39),
+                              '7'=numeric(39))
+
+empty.df <- data.frame(matrix(ncol = 17, nrow = 39))
+for (j in 1:39){
+  for (i in 1:17){
+    empty.df[i,j]<-cluster1.fc[j]*mean.of.depts[i+1]
+  }
+}
+
+test.frame<-test[,-4]
+test.frame['Weekly_Sales']<-0
+for(i in 1:nrow(test.frame)){
+  if (test.frame$Store==i){
+    test.frame$Weekly_Sales<-i
+  }
+}
+
+sales.list <- c(1:45)
+test.frame <- test.frame %>%
+  filter(Store==5)%>%
+  mutate(Weekly_Sales=sales.list[Store-1])
+
+
+###########################
+cluster1.fc<-forecast(cluster1.fit,h=39)$mean
+submission<-cluster1.fc
+write.csv(submission,file='data/testframe.csv',row.names=FALSE)
+
+
+head(test)
+a.list<-test$Date[1:39]
