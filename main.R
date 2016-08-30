@@ -43,6 +43,7 @@ cluster4.ts <-ts(rowMeans(cluster4),frequency=52)
 ###3. Time Series Forecasting
 #
 #
+library(tseries)
 #Test for stationarity by performing ADF test
 adf.test(cluster1.ts, alternative='stationary') #Dickey-Fuller = -5.279, Lag order = 5, p-value = 0.01
 adf.test(cluster2.ts, alternative='stationary') #Dickey-Fuller = -5.2943, Lag order = 5, p-value = 0.01

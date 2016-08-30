@@ -1,5 +1,5 @@
 ---
-title: "Project Summary"
+title: "My Capstone Project Summary"
 author: "Daniel Tan"
 date: "24 August 2016"
 output: html_document
@@ -7,27 +7,27 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-source('data_prep3.R')
-source('forecast2.R')
+source('data_prep.R')
+source('forecast.R')
+source('clustering.R')
 
 train <- read.train()
 test <- read.test()
-mts <- master.ts(train)
+store.matrix <- reshape.by.stores(train)
 ```
 
-## Background
+### Background
 
 In 2014, Walmart held a Kaggle competition to challenge Kagglers to build an accurate prediction of future sales based on historical data.
 
 
 I have chosen a scoped down version of this competition as my Springboard Capstone Project. If you would like to see the full details of the original Kaggle competition, please visit [this link](https://www.kaggle.com/c/walmart-recruiting-store-sales-forecasting).
 
-## 1. Data Preparation
+### 1. Data Preparation
 
 I begin with 2 data sets:
 
-* __train.csv__: Historical training data from 5/2/2010 to 26/10/2011, containing Store number, Department number, Date of the week, Weekly sales figure and isHoliday boolean
-
+* __train.csv__: Historical training data from 5/2/2010 to 26/10/2011, containing columns for Store, Dept, Date, Weekly_Sales and IsHoliday
 * __test.csv__: Test data for 2/11/2012 to 26/7/2013, containing columns for Store, Department, Date and IsHoliday
 
 ```{r, echo=TRUE}
@@ -38,16 +38,62 @@ train
 test
 ```
 
-A quick look through __train__ reveals that there are a total of 45 unique store numbers from 1 to 45. And, a total of 81 unique dept numbers from 1 to 99. This creates 3331 unique store-dept pairs. I.e. 3331 time-series, each with a frequency of 143 (roughly 2+ years of weekly sales date).
+A quick look through __train__ reveals that there are a total of 45 unique store numbers from 1 to 45. And, a total of 81 unique dept numbers from 1 to 99. This creates 3331 unique store-dept pairs. I.e. 3331 time-series, each with a frequency of 143 weeks, which roughly records 2+ years of sales data. 
 
-```{r, echo=TRUE}
-unique(train[,c("Store","Dept")])
-```
+My initial intention was to create an individual model for each time series. However, I soon found that this approach, which would require looped iterations of a 3331 x 3331 matrix, was too taxing for my computer. Therefore, my next step was to figure out how to scope the 3331 time series into managable clusters.
 
-To prepare the training data for modelling, I reshaped the data frame to a 143 x 3331 matrix. Each column in the matrix represents a time-series for 1 store-dept pair.
+### 2. Time Series Clustering
+
+Using the `reshape2` library,I reshaped my train data by stores. This created a 143 weeks x 45 store matrix. Each column represents the aggregated sales of all the departments within a store across 143 weeks.
 
 ```{r, echo=FALSE}
-mts[,1:5]
+store.matrix[1:10,1:10]
 ```
 
-## 2. Modeling
+Next, using the `TSclust` library, I applied an Autocorrelation (ACF) based dissimilarity calculation to my store matrix. This calculation performs a weighted Euclidean distance between 2 time-series, and the resulting output distance can be used as a measure for clustering.
+
+My final output will be a pair-wise matrix of 45 x 45 stores. I run these distances through hierarchical clustering, and plot out the dendrogram. Upon visual inspection of the dendrogram, I decide to cluster the stores into 4 clusters.
+
+```{r, echo=FALSE}
+tsdist<-calculate.ts.dist(store.matrix)
+hc<-hclust(tsdist)
+plot(hc)
+rect.hclust(hc,k=4)
+```
+
+### 3. ARIMA modeling
+I now have 4 time series for each of my 4 clusters. There are 2 widely used models to forecast time series - exponential smooth and ARIMA. For my forecasts, I decide to use ARIMA.
+
+A stationary time series is one whose properties do not depend on the time at which the series is observed. Before I begin to build the ARIMA model, I first test for stationarity using the Augmented Dickey-Fuller (ADF) test.
+
+```{r}
+#Test for stationarity by performing ADF test
+adf.test(cluster1.ts, alternative='stationary')
+```
+
+The results of the test suggest that this time series is stationary, and no differencing is required.
+
+Next, to determine my coefficients for the AR and MA portion of my ARIMA model, I plot the autocorrelation function (ACF) and partial autocorrelation (PACF) for the time series. From the plot, the PACF and ACF lag orders whose values which cross the confidence boundaries, are candidates for the AR and MA coefficients respectively.
+
+```{r, echo=FALSE}
+tsdisplay(cluster1.ts)
+```
+The ACF plot suggests lag order 1 and 2 are suitable candidates for the MA coefficient (q).
+The PACF plot suggests lag order 1 and 5 are suitable candidates for the AR coefficient (p).
+
+Additionally, this plot also shows that there is a clear seasonal pattern in my time series. As expected for retail sales data, there is a seasonal spike in sales in Q4 for each year. To account for this seasonality in my ARIMA model, I will apply a seasonal differencing for a period of 52 weeks. I.e. `seasonal(P, D, Q)` = `(0,1,0)[52]`
+
+To make a final decision on which coefficients to use, I loop through my candidates to find the combination of p, d and q that will result in the lowest Akaike’s Information Criterion (AIC) score. AIC is a likelihood estimation on the measure of how accurate my ARIMA model fits with the data.
+
+```{r}
+cluster1.fit<-Arima(cluster1.ts,order=c(1,0,1), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)
+```
+
+The model is then plotted as a forecast to show the expected sales for the next h=50 weeks. The dark and light shaded areas represent the 80% and 95% prediction intervals.
+```{r, echo=FALSE}
+plot(forecast(cluster1.fit,h=50))
+```
+
+
+### 4. Evaluating forecast accuracy
+A good way to evaluate
