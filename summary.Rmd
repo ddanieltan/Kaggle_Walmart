@@ -47,7 +47,7 @@ My initial intention was to create an individual model for each time series. How
 Using the `reshape2` library,I reshaped my train data by stores. This created a 143 weeks x 45 store matrix. Each column represents the aggregated sales of all the departments within a store across 143 weeks.
 
 ```{r, echo=FALSE}
-store.matrix[1:10,1:10]
+store.matrix[1:10,1:7]
 ```
 
 Next, using the `TSclust` library, I applied an Autocorrelation (ACF) based dissimilarity calculation to my store matrix. This calculation performs a weighted Euclidean distance between 2 time-series, and the resulting output distance can be used as a measure for clustering.
@@ -62,11 +62,12 @@ rect.hclust(hc,k=4)
 ```
 
 ### 3. ARIMA modeling
-I now have 4 time series for each of my 4 clusters. There are 2 widely used models to forecast time series - exponential smooth and ARIMA. For my forecasts, I decide to use ARIMA.
+I now have 4 clusters represented as 4 time series. I approach my next step to forecast these time series, with the intention of using ARIMA modeling.
 
 A stationary time series is one whose properties do not depend on the time at which the series is observed. Before I begin to build the ARIMA model, I first test for stationarity using the Augmented Dickey-Fuller (ADF) test.
 
 ```{r}
+library(TSclust)
 #Test for stationarity by performing ADF test
 adf.test(cluster1.ts, alternative='stationary')
 ```
@@ -78,6 +79,7 @@ Next, to determine my coefficients for the AR and MA portion of my ARIMA model, 
 ```{r, echo=FALSE}
 tsdisplay(cluster1.ts)
 ```
+
 The ACF plot suggests lag order 1 and 2 are suitable candidates for the MA coefficient (q).
 The PACF plot suggests lag order 1 and 5 are suitable candidates for the AR coefficient (p).
 
@@ -89,11 +91,53 @@ To make a final decision on which coefficients to use, I loop through my candida
 cluster1.fit<-Arima(cluster1.ts,order=c(1,0,1), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)
 ```
 
+
 The model is then plotted as a forecast to show the expected sales for the next h=50 weeks. The dark and light shaded areas represent the 80% and 95% prediction intervals.
+
+
 ```{r, echo=FALSE}
 plot(forecast(cluster1.fit,h=50))
 ```
 
+Once satisfied with this forecast, I repeat the steps listed in this section for each of my remaining clusters.
 
 ### 4. Evaluating forecast accuracy
-A good way to evaluate
+
+To check the fit of my ARIMA models, I plot the ACF and PACF graph of the residuals.
+If the residuals which fall within the confidence boundaries, there is a good likelihood that the model is a a good fit.
+
+```{r,echo=FALSE}
+tsdisplay(residuals(cluster1.fit))
+```
+
+Because this project is based on a Kaggle competition, the actual sales values of the test data set are not provided to me. This is quite inconvenient because I am unable to test the accuracy of my predictions locally. As a simple work-around, I will be splitting my train data set (143 weeks), into my own mini-train(120 weeks) and mini-test(23 weeks) data set for local testing.
+
+As a metric for accuracy, I will be calculating the Mean Absolute Percentage Error (MAPE) of my predictions versus the actual test values. 
+
+```{r,echo=FALSE}
+mape.table <- data.frame(Cluster=c(1,2,3,4),
+                         MAPE=c(5.837927,5.824512,5.570019,6.833386))
+mape.table
+```
+
+
+The MAPE is roughly 5-6%, which is satisfactory for a small, local test.
+
+Finally, I generate predictions using the entire train data set. This will be condensed into a `csv` file to be uploaded to Kaggle. The Kaggle competition is over, but Kagglers can still test themselves by uploading their predictions to the Public Leader Board. For each submission, Kaggle will tell you what rank you would have placed had your submission came in during the valid competition period.
+
+As a benchmark to the performance of my ARIMA model, I also submitted 2 other simple models:
+* __Seasonal Naive__: A simple forecast that uses last year's sales for predicting next year's sales. Ie. this model predicts the future sales of 1 Jan 2013, to be identical to the sales value of 1 Jan 2012
+* __Linear Regression Model__: Computes a forecast using linear regression and seasonal dummy variables
+
+![The Arima model placed 65th](C:\Users\Daniel\Documents\GitHub\Kaggle_Walmart\results\arima.png)
+
+![The Seasonal Naive model placed 168th](C:\Users\Daniel\Documents\GitHub\Kaggle_Walmart\results\arima.png)
+
+![The Linear Regression model placed 216th](C:\Users\Daniel\Documents\GitHub\Kaggle_Walmart\results\arima.png)
+
+
+### 5. Conclusion
+
+
+
+### 6. Acknowledgements
