@@ -129,11 +129,11 @@ As a benchmark to the performance of my ARIMA model, I also submitted 2 other si
 * __Seasonal Naive__: A simple forecast that uses last year's sales for predicting next year's sales. Ie. this model predicts the future sales of 1 Jan 2013, to be identical to the sales value of 1 Jan 2012
 * __Linear Regression Model__: Computes a forecast using linear regression and seasonal dummy variables
 
+#Results
+
+The Arima model performed the best of the 3 models, placing at 65th place. The seasonal naive and linear regression model came in at 168th and 216th place respectively.
+
 ![The Arima model placed 65th](https://github.com/ddanieltan/Kaggle_Walmart/blob/master/results/arima.PNG)
-
-![The Seasonal Naive model placed 168th](https://github.com/ddanieltan/Kaggle_Walmart/blob/master/results/seasonal_naive.PNG)
-
-![The Linear Regression model placed 216th](https://github.com/ddanieltan/Kaggle_Walmart/blob/master/results/tslm.PNG)
 
 
 ### 5. Conclusion
