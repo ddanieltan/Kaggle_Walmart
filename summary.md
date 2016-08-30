@@ -7,14 +7,14 @@ output: html_document
 
 
 
-### Background
+## Background
 
 In 2014, Walmart held a Kaggle competition to challenge Kagglers to build an accurate prediction of future sales based on historical data.
 
 
 I have chosen a scoped down version of this competition as my Springboard Capstone Project. If you would like to see the full details of the original Kaggle competition, please visit [this link](https://www.kaggle.com/c/walmart-recruiting-store-sales-forecasting).
 
-### 1. Data Preparation
+## 1. Data Preparation
 
 I begin with 2 data sets:
 
@@ -72,7 +72,7 @@ A quick look through __train__ reveals that there are a total of 45 unique store
 
 My initial intention was to create an individual model for each time series. However, I soon found that this approach, which would require looped iterations of a 3331 x 3331 matrix, was too taxing for my computer. Therefore, my next step was to figure out how to scope the 3331 time series into managable clusters.
 
-### 2. Time Series Clustering
+## 2. Time Series Clustering
 
 Using the `reshape2` library,I reshaped my train data by stores. This created a 143 weeks x 45 store matrix. Each column represents the aggregated sales of all the departments within a store across 143 weeks.
 
@@ -100,7 +100,7 @@ My final output will be a pair-wise matrix of 45 x 45 stores. I run these distan
 
 ![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png)
 
-### 3. ARIMA modeling
+## 3. ARIMA modeling
 I now have 4 clusters represented as 4 time series. I approach my next step to forecast these time series, with the intention of using ARIMA modeling.
 
 A stationary time series is one whose properties do not depend on the time at which the series is observed. Before I begin to build the ARIMA model, I first test for stationarity using the Augmented Dickey-Fuller (ADF) test.
@@ -145,17 +145,17 @@ cluster1.fit<-Arima(cluster1.ts,order=c(1,0,1), seasonal = list(order = c(0,1,0)
 ```
 
 
-The model is then plotted as a forecast to show the expected sales for the next h=50 weeks. The dark and light shaded areas represent the 80% and 95% prediction intervals.
+Using the `forecast` library, the model is then plotted as a forecast to show the expected sales for the next h=50 weeks. The dark and light shaded areas represent the 80% and 95% prediction intervals.
 
 
 ![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png)
 
 Once satisfied with this forecast, I repeat the steps listed in this section for each of my remaining clusters.
 
-### 4. Evaluating forecast accuracy
+## 4. Evaluating forecast accuracy
 
 To check the fit of my ARIMA models, I plot the ACF and PACF graph of the residuals.
-If the residuals which fall within the confidence boundaries, there is a good likelihood that the model is a a good fit.
+If the residuals fall within the confidence boundaries, there is a good likelihood that the model is a a good fit.
 
 ![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-1.png)
 
@@ -181,15 +181,15 @@ As a benchmark to the performance of my ARIMA model, I also submitted 2 other si
 * __Seasonal Naive__: A simple forecast that uses last year's sales for predicting next year's sales. Ie. this model predicts the future sales of 1 Jan 2013, to be identical to the sales value of 1 Jan 2012
 * __Linear Regression Model__: Computes a forecast using linear regression and seasonal dummy variables
 
+###Results
+
+The Arima model performed the best of the 3 models, placing at 65th place. The seasonal naive and linear regression model came in at 168th and 216th place respectively.
+
 ![The Arima model placed 65th](https://github.com/ddanieltan/Kaggle_Walmart/blob/master/results/arima.PNG)
 
-![The Seasonal Naive model placed 168th](https://github.com/ddanieltan/Kaggle_Walmart/blob/master/results/seasonal_naive.PNG)
 
-![The Linear Regression model placed 216th](https://github.com/ddanieltan/Kaggle_Walmart/blob/master/results/tslm.PNG)
-
-
-### 5. Conclusion
+## 5. Conclusion
 
 
 
-### 6. Acknowledgements
+## 6. Acknowledgements
