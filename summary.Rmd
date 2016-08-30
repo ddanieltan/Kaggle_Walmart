@@ -92,7 +92,7 @@ cluster1.fit<-Arima(cluster1.ts,order=c(1,0,1), seasonal = list(order = c(0,1,0)
 ```
 
 
-The model is then plotted as a forecast to show the expected sales for the next h=50 weeks. The dark and light shaded areas represent the 80% and 95% prediction intervals.
+Using the `forecast` library, the model is then plotted as a forecast to show the expected sales for the next h=50 weeks. The dark and light shaded areas represent the 80% and 95% prediction intervals.
 
 
 ```{r, echo=FALSE}
@@ -129,11 +129,11 @@ As a benchmark to the performance of my ARIMA model, I also submitted 2 other si
 * __Seasonal Naive__: A simple forecast that uses last year's sales for predicting next year's sales. Ie. this model predicts the future sales of 1 Jan 2013, to be identical to the sales value of 1 Jan 2012
 * __Linear Regression Model__: Computes a forecast using linear regression and seasonal dummy variables
 
-![The Arima model placed 65th](C:\Users\Daniel\Documents\GitHub\Kaggle_Walmart\results\arima.png)
+![The Arima model placed 65th](https://github.com/ddanieltan/Kaggle_Walmart/blob/master/results/arima.PNG)
 
-![The Seasonal Naive model placed 168th](C:\Users\Daniel\Documents\GitHub\Kaggle_Walmart\results\arima.png)
+![The Seasonal Naive model placed 168th](https://github.com/ddanieltan/Kaggle_Walmart/blob/master/results/seasonal_naive.PNG)
 
-![The Linear Regression model placed 216th](C:\Users\Daniel\Documents\GitHub\Kaggle_Walmart\results\arima.png)
+![The Linear Regression model placed 216th](https://github.com/ddanieltan/Kaggle_Walmart/blob/master/results/tslm.PNG)
 
 
 ### 5. Conclusion
