@@ -104,7 +104,7 @@ Once satisfied with this forecast, I repeat the steps listed in this section for
 ## 4. Evaluating forecast accuracy
 
 To check the fit of my ARIMA models, I plot the ACF and PACF graph of the residuals.
-If the residuals which fall within the confidence boundaries, there is a good likelihood that the model is a a good fit.
+If the residuals fall within the confidence boundaries, there is a good likelihood that the model is a a good fit.
 
 ```{r,echo=FALSE}
 tsdisplay(residuals(cluster1.fit))
