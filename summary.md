@@ -112,7 +112,7 @@ I now have 4 clusters represented as 4 time series. I approach my next step to f
 
 The ARIMA model is a combination of Autoregressive models (AR), Moving average models (MA) and can be extended to non-stationary time series through Integration(I). It's formula can be extended to include parameters to determine both trend and seasonal patterns.
 
-<img src="https://www.otexts.org/sites/default/files/fpp/images/sarima1.png" width="400" height="200">
+<img src="https://www.otexts.org/sites/default/files/fpp/images/sarima1.png" width="700" height="150">
 
 A stationary time series is one whose properties do not depend on the time at which the series is observed. Before I began to build the ARIMA model, I first tested for stationarity using the Augmented Dickey-Fuller (ADF) test.
 
