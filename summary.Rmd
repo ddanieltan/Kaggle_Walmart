@@ -1,7 +1,7 @@
 ---
 title: "My Capstone Project Summary"
 author: "Daniel Tan"
-date: "24 August 2016"
+date: "31 August 2016"
 output: html_document
 ---
 
@@ -85,9 +85,8 @@ I now have 4 clusters represented as 4 time series. I approach my next step to f
 
 The ARIMA model is a combination of Autoregressive models (AR), Moving average models (MA) and can be extended to non-stationary time series through Integration(I). It's formula can be extended to include parameters to determine both trend and seasonal patterns.
 
-<div style="width:300px; height=200px">
+
 ![Seasonal ARIMA formula](https://www.otexts.org/sites/default/files/fpp/images/sarima1.png)
-</div>
 [Picture source](https://www.otexts.org/fpp/8/9) 
 
 A stationary time series is one whose properties do not depend on the time at which the series is observed. Before I began to build the ARIMA model, I first tested for stationarity using the Augmented Dickey-Fuller (ADF) test.
@@ -177,7 +176,7 @@ Problems encountered|Solution
 --------------------|-----------------------------------------------------------------------
 1. Dataset was too large to be computed on my system| Used time series clustering to scope down the size of the data in a way that minimizes confidence loss
 2. I was unprepared for the technical complexity of clustering and modeling time series data accurately|Adopted a "Done is better than perfect" mentality, and constantly sought out advice on intelligent ways to scope my problem into something more managable
-3. Actual test data was hidden behind Kaggle| Split my train data into smaller subsets of train and test data, that could be used to measure accuracy on my local system
+3. Actual test data was hidden behind Kaggle| Split my train data into smaller subsets of train and test data that could be used to measure accuracy on my local system
 
 ## 6. Acknowledgements
 
