@@ -103,11 +103,17 @@ My final output will be a pair-wise matrix of 45 x 45 stores. I run these distan
 ## 3. ARIMA modeling
 I now have 4 clusters represented as 4 time series. I approach my next step to forecast these time series, with the intention of using ARIMA modeling.
 
-A stationary time series is one whose properties do not depend on the time at which the series is observed. Before I begin to build the ARIMA model, I first test for stationarity using the Augmented Dickey-Fuller (ADF) test.
+The ARIMA model is a combination of Autoregressive models (AR), Moving average models (MA) and can be extended to non-stationary time series through Integration(I). It's formula can be extended to include parameters to determine both trend and seasonal patterns.
+
+<div style="width:300px; height=200px">
+![Seasonal ARIMA formula](https://www.otexts.org/sites/default/files/fpp/images/sarima1.png)
+</div>
+[Picture source](https://www.otexts.org/fpp/8/9) 
+
+A stationary time series is one whose properties do not depend on the time at which the series is observed. Before I began to build the ARIMA model, I first tested for stationarity using the Augmented Dickey-Fuller (ADF) test.
 
 
 ```r
-library(TSclust)
 #Test for stationarity by performing ADF test
 adf.test(cluster1.ts, alternative='stationary')
 ```
@@ -141,7 +147,20 @@ To make a final decision on which coefficients to use, I loop through my candida
 
 
 ```r
-cluster1.fit<-Arima(cluster1.ts,order=c(1,0,1), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)
+Arima(cluster1.ts,order=c(1,0,1), seasonal = list(order = c(0,1,0), period = 52), include.mean = FALSE)
+```
+
+```
+## Series: cluster1.ts 
+## ARIMA(1,0,1)(0,1,0)[52]                    
+## 
+## Coefficients:
+##          ar1      ma1
+##       0.9733  -0.8749
+## s.e.  0.0295   0.0627
+## 
+## sigma^2 estimated as 1.326e+09:  log likelihood=-1084.13
+## AIC=2174.26   AICc=2174.54   BIC=2181.79
 ```
 
 
@@ -183,13 +202,45 @@ As a benchmark to the performance of my ARIMA model, I also submitted 2 other si
 
 ###Results
 
-The Arima model performed the best of the 3 models, placing at 65th place. The seasonal naive and linear regression model came in at 168th and 216th place respectively.
+The Arima model performed the best of the 3 models, placing in the __65th place__ of Kaggle's public leaderboard. The seasonal naive and linear regression model came in at 168th and 216th place respectively.
 
 ![The Arima model placed 65th](https://github.com/ddanieltan/Kaggle_Walmart/blob/master/results/arima.PNG)
 
 
 ## 5. Conclusion
 
+Recap of this project:
 
+1. I took Walmart's Kaggle competition data and cleaned, filtered and reshaped it into separate time series
+
+2. I took a measure of the similarity of these time series to each other, and clustered them into 4 individual time series
+
+3. For each time series, I applied exploration and analysis to fit an appropriate ARIMA model
+
+4. I tested the accuracy of each ARIMA model against a small sample of local data, and the official test data provided on Kaggle
+
+Problems encountered|Solution
+--------------------|-----------------------------------------------------------------------
+1. Dataset was too large to be computed on my system| Used time series clustering to scope down the size of the data in a way that minimizes confidence loss
+2. I was unprepared for the technical complexity of clustering and modeling time series data accurately|Adopted a "Done is better than perfect" mentality, and constantly sought out advice on intelligent ways to scope my problem into something more managable
+3. Actual test data was hidden behind Kaggle| Split my train data into smaller subsets of train and test data, that could be used to measure accuracy on my local system
 
 ## 6. Acknowledgements
+
+People:
+
+1. Anirban Ghosh (Springboard mentor)
+
+2. William TJVI
+
+3. Peh Shu Ming
+
+Resources:
+
+1. [Forecasting: Principles and Practice](https://www.otexts.org/fpp/)
+
+2. [Winning entry for the actual Kaggle competition](https://bitbucket.org/dthal/kaggle_walmart)
+
+3. [Duke University's notes on ARIMA order selection](http://people.duke.edu/~rnau/arimrule.htm)
+
+4. [A little book of R for time series](https://a-little-book-of-r-for-time-series.readthedocs.io/en/latest/)
