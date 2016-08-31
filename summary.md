@@ -1,7 +1,7 @@
 ---
 title: "My Capstone Project Summary"
 author: "Daniel Tan"
-date: "24 August 2016"
+date: "31 August 2016"
 output: html_document
 ---
 
@@ -78,20 +78,27 @@ Using the `reshape2` library,I reshaped my train data by stores. This created a 
 
 
 ```
-## Source: local data frame [10 x 7]
+## Source: local data frame [143 x 46]
 ## 
-##          Date       1      10      11        12      13      14
-##        (date)   (dbl)   (dbl)   (dbl)     (dbl)   (dbl)   (dbl)
-## 1  2010-02-05 1643691 2193049 1528009 1100046.4 1967221 2623470
-## 2  2010-02-12 1641957 2176029 1574684 1117863.3 2030933 1704219
-## 3  2010-02-19 1611968 2113433 1503299 1095421.6 1970275 2204557
-## 4  2010-02-26 1409728 2006775 1336405 1048617.2 1817850 2095592
-## 5  2010-03-05 1554807 1987090 1426623 1077018.3 1939980 2237545
-## 6  2010-03-12 1439542 1941346 1331883  985594.2 1840687 2156035
-## 7  2010-03-19 1472516 1946875 1364207  972088.3 1879795 2066219
-## 8  2010-03-26 1404430 1893532 1245624  981615.8 1882096 2050396
-## 9  2010-04-02 1594968 2138652 1446210 1011822.3 2142482 2495631
-## 10 2010-04-09 1545419 2041069 1470308 1041238.9 1898321 2258781
+##          Date       1      10      11        12      13      14       15
+##        (date)   (dbl)   (dbl)   (dbl)     (dbl)   (dbl)   (dbl)    (dbl)
+## 1  2010-02-05 1643691 2193049 1528009 1100046.4 1967221 2623470 652122.4
+## 2  2010-02-12 1641957 2176029 1574684 1117863.3 2030933 1704219 682447.1
+## 3  2010-02-19 1611968 2113433 1503299 1095421.6 1970275 2204557 660838.8
+## 4  2010-02-26 1409728 2006775 1336405 1048617.2 1817850 2095592 564883.2
+## 5  2010-03-05 1554807 1987090 1426623 1077018.3 1939980 2237545 605325.4
+## 6  2010-03-12 1439542 1941346 1331883  985594.2 1840687 2156035 604173.6
+## 7  2010-03-19 1472516 1946875 1364207  972088.3 1879795 2066219 593710.7
+## 8  2010-03-26 1404430 1893532 1245624  981615.8 1882096 2050396 592111.5
+## 9  2010-04-02 1594968 2138652 1446210 1011822.3 2142482 2495631 718470.7
+## 10 2010-04-09 1545419 2041069 1470308 1041238.9 1898321 2258781 634605.8
+## ..        ...     ...     ...     ...       ...     ...     ...      ...
+## Variables not shown: 16 (dbl), 17 (dbl), 18 (dbl), 19 (dbl), 2 (dbl), 20
+##   (dbl), 21 (dbl), 22 (dbl), 23 (dbl), 24 (dbl), 25 (dbl), 26 (dbl), 27
+##   (dbl), 28 (dbl), 29 (dbl), 3 (dbl), 30 (dbl), 31 (dbl), 32 (dbl), 33
+##   (dbl), 34 (dbl), 35 (dbl), 36 (dbl), 37 (dbl), 38 (dbl), 39 (dbl), 4
+##   (dbl), 40 (dbl), 41 (dbl), 42 (dbl), 43 (dbl), 44 (dbl), 45 (dbl), 5
+##   (dbl), 6 (dbl), 7 (dbl), 8 (dbl), 9 (dbl)
 ```
 
 Next, using the `TSclust` library, I applied an Autocorrelation (ACF) based dissimilarity calculation to my store matrix. This calculation performs a weighted Euclidean distance between 2 time-series, and the resulting output distance can be used as a measure for clustering.
@@ -105,9 +112,7 @@ I now have 4 clusters represented as 4 time series. I approach my next step to f
 
 The ARIMA model is a combination of Autoregressive models (AR), Moving average models (MA) and can be extended to non-stationary time series through Integration(I). It's formula can be extended to include parameters to determine both trend and seasonal patterns.
 
-
-![Seasonal ARIMA formula](https://www.otexts.org/sites/default/files/fpp/images/sarima1.png)
-[Picture source](https://www.otexts.org/fpp/8/9) 
+<img src="https://www.otexts.org/sites/default/files/fpp/images/sarima1.png" width="400" height="200">
 
 A stationary time series is one whose properties do not depend on the time at which the series is observed. Before I began to build the ARIMA model, I first tested for stationarity using the Augmented Dickey-Fuller (ADF) test.
 
@@ -222,7 +227,7 @@ Problems encountered|Solution
 --------------------|-----------------------------------------------------------------------
 1. Dataset was too large to be computed on my system| Used time series clustering to scope down the size of the data in a way that minimizes confidence loss
 2. I was unprepared for the technical complexity of clustering and modeling time series data accurately|Adopted a "Done is better than perfect" mentality, and constantly sought out advice on intelligent ways to scope my problem into something more managable
-3. Actual test data was hidden behind Kaggle| Split my train data into smaller subsets of train and test data, that could be used to measure accuracy on my local system
+3. Actual test data was hidden behind Kaggle| Split my train data into smaller subsets of train and test data that could be used to measure accuracy on my local system
 
 ## 6. Acknowledgements
 
@@ -238,8 +243,10 @@ Resources:
 
 1. [Forecasting: Principles and Practice](https://www.otexts.org/fpp/)
 
-2. [Winning entry for the actual Kaggle competition](https://bitbucket.org/dthal/kaggle_walmart)
+2. [The winning entry for the actual Kaggle competition](https://bitbucket.org/dthal/kaggle_walmart)
 
 3. [Duke University's notes on ARIMA order selection](http://people.duke.edu/~rnau/arimrule.htm)
 
 4. [A little book of R for time series](https://a-little-book-of-r-for-time-series.readthedocs.io/en/latest/)
+
+5. [Time series clustering from AusDM R and Data Mining Workshop](http://www2.rdatamining.com/uploads/5/7/1/3/57136767/rdatamining-slides-time-series-analysis.pdf)
