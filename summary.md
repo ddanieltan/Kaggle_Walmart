@@ -243,7 +243,7 @@ Resources:
 
 1. [Forecasting: Principles and Practice](https://www.otexts.org/fpp/)
 
-2. [The winning entry for the actual Kaggle competition](https://bitbucket.org/dthal/kaggle_walmart)
+2. [David Thaler's winning entry for the actual Kaggle competition](https://bitbucket.org/dthal/kaggle_walmart)
 
 3. [Duke University's notes on ARIMA order selection](http://people.duke.edu/~rnau/arimrule.htm)
 
