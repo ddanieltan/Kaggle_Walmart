@@ -235,7 +235,7 @@ People:
 
 1. Anirban Ghosh (Springboard mentor)
 
-2. William TJVI
+2. William TJHI
 
 3. Peh Shu Ming
 
