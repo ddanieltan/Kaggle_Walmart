@@ -5,6 +5,8 @@ Please refer to the [Kaggle page](https://www.kaggle.com/c/walmart-recruiting-st
 
 __To read my summary of this project__, please read my [Project summary page](https://github.com/ddanieltan/Kaggle_Walmart/blob/master/summary.md).
 
+__To view a presentation on my approach to this project__, please view my [Project Slides](https://github.com/ddanieltan/Kaggle_Walmart/blob/master/walmart_forecasting.pdf)
+
 This repository contains:
 
 File|Description
