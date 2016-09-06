@@ -13,7 +13,8 @@ main.R| Main controller for project where all code is executed
 data_prep.R|Contains functions for data preparation and submission writing
 clustering.R|Contains functions for time series clustering
 forecast.R|Contains functions for time series forecasting
-summary.md|Summary writeup for this project
+summary.md|Technical documentation and a summary writeup for this project
+walmart_forecasting.pdf|Presentation slides for my project
 
 Directory|Description
 ---------|--------------------------------------------------------------------------------------------
